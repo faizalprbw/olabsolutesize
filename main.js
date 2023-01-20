@@ -39,10 +39,10 @@ function getCenterOfExtent(Extent){
 }
 
 /* FUNCTION IMPORTANT */
-function resizeLayer(vlayer){
+function resizeLayer(feature){
   let curZoomlvl = map.getView().getZoom();
-  let originGeom = vlayer.getSource().getFeatures()[0].getGeometry().clone();
-  let geom_current = vlayer.getSource().getFeatures()[0].getGeometry();
+  let originGeom = feature.getGeometry().clone();
+  let geom_current = feature.getGeometry();
   let geom_extent = geom_current.getExtent();
   let geom_center = getCenterOfExtent(geom_extent);
   let extent_ration;
@@ -54,7 +54,7 @@ function resizeLayer(vlayer){
     return 'No need to resize';
   };
   if(extent_ration < 0.0001 ){
-    vlayer.getSource().getFeatures()[0].getGeometry().scale(4, undefined, geom_center);
+    feature.getGeometry().scale(4, undefined, geom_center);
   } 
   map.on('moveend', function(e) {
     var zoomLevel = map.getView().getZoom();
@@ -68,10 +68,10 @@ function resizeLayer(vlayer){
       extent_ration = geom_current.getArea() / fromExtent(map.getView().calculateExtent()).getArea();
     };
     if(zoomLevel <= curZoomlvl && extent_ration < 0.0001 ){
-      vlayer.getSource().getFeatures()[0].getGeometry().scale(2, undefined, geom_center);
+      feature.getGeometry().scale(4, undefined, geom_center);
       curZoomlvl = zoomLevel
     } else if(zoomLevel > curZoomlvl && sdownLimitCondition ) {
-      vlayer.getSource().getFeatures()[0].getGeometry().scale(0.5, undefined, geom_center);
+      feature.getGeometry().scale(0.5, undefined, geom_center);
       curZoomlvl = zoomLevel
     }
   });
@@ -112,22 +112,6 @@ var poly = new Feature({
   name: 'hello'
 }); 
 
-var vectorSource = new VectorSource({
-  features: [poly]
-});
-
-var vectorLayer = new VectorLayer({
-  source: vectorSource,
-  style: new Style({
-    stroke: new Stroke({
-      color: 'red',
-      width: 0.5,
-    }),
-    fill: new Fill({
-      color: '#ff000078',
-    }),
-  }),
-});
 
 var poly2 = new Feature({
   geometry: new Polygon(
@@ -182,23 +166,6 @@ var poly2 = new Feature({
   )
 }); 
 
-var vectorSource2 = new VectorSource({
-  features: [poly2]
-});
-
-var vectorLayer2 = new VectorLayer({
-  source: vectorSource2,
-  style: new Style({
-    stroke: new Stroke({
-      color: 'red',
-      width: 0.5,
-    }),
-    fill: new Fill({
-      color: '#ff000078',
-    }),
-  }),
-});
-
 
 var poly3 = new Feature({
   geometry: new Polygon(
@@ -228,23 +195,6 @@ var poly3 = new Feature({
     ]
   )
 }); 
-
-var vectorSource3 = new VectorSource({
-  features: [poly3]
-});
-
-var vectorLayer3 = new VectorLayer({
-  source: vectorSource3,
-  style: new Style({
-    stroke: new Stroke({
-      color: 'red',
-      width: 0.5,
-    }),
-    fill: new Fill({
-      color: '#ff000078',
-    }),
-  }),
-});
 
 
 var poly4 = new Feature({
@@ -284,24 +234,6 @@ var poly4 = new Feature({
   )
 }); 
 
-var vectorSource4 = new VectorSource({
-  features: [poly4]
-});
-
-var vectorLayer4 = new VectorLayer({
-  source: vectorSource4,
-  style: new Style({
-    stroke: new Stroke({
-      color: 'red',
-      width: 0.5,
-    }),
-    fill: new Fill({
-      color: '#ff000078',
-    }),
-  }),
-});
-
-
 var poly5 = new Feature({
   geometry: new Polygon(
     [
@@ -330,23 +262,6 @@ var poly5 = new Feature({
     ]
   )
 }); 
-
-var vectorSource5 = new VectorSource({
-  features: [poly5]
-});
-
-var vectorLayer5 = new VectorLayer({
-  source: vectorSource5,
-  style: new Style({
-    stroke: new Stroke({
-      color: 'red',
-      width: 0.5,
-    }),
-    fill: new Fill({
-      color: '#ff000078',
-    }),
-  }),
-});
 
 
 var line6 = new Feature({
@@ -380,20 +295,6 @@ var line6 = new Feature({
   )
 }); 
 
-var vectorSource6 = new VectorSource({
-  features: [line6]
-});
-
-var vectorLayer6 = new VectorLayer({
-  source: vectorSource6,
-  style: new Style({
-    stroke: new Stroke({
-      color: 'red',
-      width: 1,
-    })
-  }),
-});
-
 
 var line7 = new Feature({
   geometry: new LineString(
@@ -422,20 +323,6 @@ var line7 = new Feature({
   )
 }); 
 
-var vectorSource7 = new VectorSource({
-  features: [line7]
-});
-
-var vectorLayer7 = new VectorLayer({
-  source: vectorSource7,
-  style: new Style({
-    stroke: new Stroke({
-      color: 'red',
-      width: 1,
-    })
-  }),
-});
-
 var line8 = new Feature({
   geometry: new LineString(
     [
@@ -450,21 +337,6 @@ var line8 = new Feature({
     ]
   )
 }); 
-
-var vectorSource8 = new VectorSource({
-  features: [line8]
-});
-
-var vectorLayer8 = new VectorLayer({
-  source: vectorSource8,
-  style: new Style({
-    stroke: new Stroke({
-      color: 'red',
-      width: 1,
-    })
-  }),
-});
-
 
 var line9 = new Feature({
   geometry: new LineString(
@@ -489,34 +361,55 @@ var line9 = new Feature({
   )
 }); 
 
-var vectorSource9 = new VectorSource({
-  features: [line9]
+
+var vectorSource = new VectorSource({
+  features: [
+    poly,
+    poly2,
+    poly3,
+    poly4,
+    poly5,
+    line6,
+    line7,
+    line8,
+    line9
+  ]
 });
 
-var vectorLayer9 = new VectorLayer({
-  source: vectorSource9,
+var vectorLayer = new VectorLayer({
+  source: vectorSource,
   style: new Style({
     stroke: new Stroke({
       color: 'red',
-      width: 1,
-    })
+      width: 0.5,
+    }),
+    fill: new Fill({
+      color: '#ff000078',
+    }),
   }),
 });
 
 
 
-let all_layers = [
-  vectorLayer, vectorLayer2, vectorLayer3, vectorLayer4,
-  vectorLayer5, vectorLayer6, vectorLayer7, vectorLayer8,
-  vectorLayer9
-]
 
-all_layers.forEach(function(vlayer){
-  map.addLayer(vlayer);
-})
+// let all_layers = [
+//   vectorLayer, vectorLayer2, vectorLayer3, vectorLayer4,
+//   vectorLayer5, vectorLayer6, vectorLayer7, vectorLayer8,
+//   vectorLayer9
+// ]
 
-map.getAllLayers().forEach(function(vlayer, idx){
-  if(idx>0){
-    resizeLayer(vlayer)
-  }
-})
+// all_layers.forEach(function(vlayer){
+//   map.addLayer(vlayer);
+// })
+
+map.addLayer(vectorLayer);
+
+vectorLayer.getSource().forEachFeature(function (feature) {
+  resizeLayer(feature)
+});
+
+// map.getAllLayers().forEach(function(vlayer, idx){
+//   if(idx>0){
+//     resizeLayer(vlayer)
+//   }
+// })
