@@ -408,6 +408,10 @@ vectorLayer.getSource().forEachFeature(function (feature) {
   resizeLayer(feature)
 });
 
+// Get Extent
+var ext = vectorLayer.getSource().getExtent();
+map.getView().fit(ext, map.getSize());
+ 
 // map.getAllLayers().forEach(function(vlayer, idx){
 //   if(idx>0){
 //     resizeLayer(vlayer)
